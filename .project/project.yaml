@@ -1,0 +1,13 @@
+name: "gui_fidget"
+description: "Applications GUI natives en C, rapides et légères, sur la pile UI du RAD Debugger : démo de widgets, todo, skill."
+topics:
+  - "c"
+  - "gui"
+  - "immediate-mode-ui"
+  - "d3d11"
+  - "windows"
+homepage: ""
+source:
+  provider: github
+  namespace: "sachahjkl"
+  path: "sachahjkl/gui_fidget"
