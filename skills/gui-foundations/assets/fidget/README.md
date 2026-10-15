@@ -10,7 +10,8 @@ A widget playground on the RAD Debugger UI stack. `run.bat` (here or at the repo
 - **Data**: 20,000-row virtualized table (sort, resize columns, filter, keyboard navigation) and a file tree
 - **Playground**: physics balls, confetti, fidget spinner, live accent color picker, draggable sticky notes
 - 6 cross-fading themes (Midnight, Graphite, Daylight, Nord, Dracula, Amber), dark title bar to match
-- View menu: **Disable animations** (Ctrl+J), slow motion, UI box outlines, status bar
+- View menu: animations (**follow the OS setting by default**, or always on / always off), slow motion, UI box outlines, status bar
+- Settings (animation mode, theme, status bar) are saved to `%APPDATA%\gui_fidget\settings.txt` (plain `key=value` lines)
 
 Shortcuts: Ctrl+K palette, Ctrl+1..4 pages, Ctrl+T next theme, Ctrl+B status bar, Ctrl+J animations on/off.
 
@@ -19,6 +20,7 @@ Shortcuts: Ctrl+K palette, Ctrl+1..4 pages, Ctrl+T next theme, Ctrl+B status bar
     src/main.c          includes, OS->UI events, draw walk, frame loop, entry point
     src/fw_app.h        types, command table (X-macro), app state
     src/fw_theme.c      palettes -> flat tag/color theme
+    src/fw_settings.c   persisted settings + OS animation preference
     src/fw_widgets.c    widget library
     src/fw_physics.c    balls + confetti
     src/fw_commands.c   toasts, command dispatch, command palette, modal

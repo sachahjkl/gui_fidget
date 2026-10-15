@@ -163,7 +163,10 @@ X(ThemeDracula, "Theme: Dracula",             "Theme",    "",       ICON_PALETTE
 X(ThemeAmber,   "Theme: Amber",               "Theme",    "",       ICON_PALETTE)  \
 X(NextTheme,    "Theme: Cycle next",          "Theme",    "Ctrl+T", ICON_REFRESH)  \
 X(ToggleStatus, "View: Toggle status bar",    "View",     "Ctrl+B", ICON_WINDOW)   \
-X(ToggleNoAnim, "View: Disable animations",   "View",     "Ctrl+J", ICON_PAUSE)    \
+X(ToggleNoAnim, "View: Toggle animations",    "View",     "Ctrl+J", ICON_PAUSE)    \
+X(AnimSystem,   "View: Animations follow system setting","View","",  ICON_PAUSE)    \
+X(AnimOn,       "View: Animations always on", "View",     "",       ICON_PAUSE)    \
+X(AnimOff,      "View: Animations always off","View",     "",       ICON_PAUSE)    \
 X(ToggleSlowmo, "View: Slow-motion animations","View",    "",       ICON_PAUSE)    \
 X(ToggleBoxes,  "View: Show UI box outlines", "View",     "",       ICON_GRID)     \
 X(ToastInfo,    "Toast: Info",                "Feedback", "",       ICON_INFO)     \
@@ -199,6 +202,12 @@ global CmdInfo cmd_info[Cmd_COUNT] =
 
 ////////////////////////////////
 //~ App state
+
+typedef enum AnimMode { Anim_System, Anim_On, Anim_Off } AnimMode;
+
+// what gets persisted (plain S32 fields: compared with MemoryMatch to detect changes)
+typedef struct Settings Settings;
+struct Settings { S32 anim_mode; S32 palette; S32 status_bar; };
 
 typedef struct App App;
 struct App
@@ -236,7 +245,11 @@ struct App
   PageKind page;
   B32 show_status;
   B32 slowmo;
-  B32 no_anim;
+  int anim_mode;                // AnimMode: follow the OS setting (default) / always on / always off
+  B32 no_anim;                  // effective result, refreshed every frame by fw_anim_resolve()
+  B32 os_anim_on;
+  U64 os_anim_checked_us;
+  Settings saved_settings;
   B32 show_boxes;
 
   // overlays
@@ -315,6 +328,7 @@ struct App
   Vec2F32 window_dim;
   char last_title[512];
   B32 debug_title;
+  int debug_cmd;
   U64 dbg_wheel_events;
 };
 global App app = {0};

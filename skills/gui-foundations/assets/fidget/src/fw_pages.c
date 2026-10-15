@@ -1180,7 +1180,11 @@ fw_menubar_build(void)
   UI_CtxMenu(fw_menu_key(1))
   {
     if(fw_menu_item(0, "Status bar", "Ctrl+B", app.show_status, w))     { app.show_status ^= 1; }
-    if(fw_menu_item(0, "Disable animations", "Ctrl+J", app.no_anim, w)) { fw_run_cmd(Cmd_ToggleNoAnim); }
+    fw_hline_px(w);
+    if(fw_menu_item(0, "Animations: system setting", "", app.anim_mode == Anim_System, w)) { fw_run_cmd(Cmd_AnimSystem); }
+    if(fw_menu_item(0, "Animations: always on", "", app.anim_mode == Anim_On, w))          { fw_run_cmd(Cmd_AnimOn); }
+    if(fw_menu_item(0, "Animations: always off", "Ctrl+J", app.anim_mode == Anim_Off, w))  { fw_run_cmd(Cmd_AnimOff); }
+    fw_hline_px(w);
     if(fw_menu_item(0, "Slow-motion animations", "", app.slowmo, w))    { fw_run_cmd(Cmd_ToggleSlowmo); }
     if(fw_menu_item(0, "UI box outlines", "", app.show_boxes, w))       { app.show_boxes ^= 1; }
     fw_hline_px(w);

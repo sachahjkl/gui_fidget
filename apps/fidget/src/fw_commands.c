@@ -112,7 +112,10 @@ fw_run_cmd(CmdKind kind)
     }break;
     case Cmd_NextTheme:    fw_set_palette(app.palette_idx + 1); fw_toast(Toast_Info, "Theme: %s", palettes[app.palette_idx].name); break;
     case Cmd_ToggleStatus: app.show_status ^= 1; break;
-    case Cmd_ToggleNoAnim: app.no_anim ^= 1; fw_toast(Toast_Info, app.no_anim ? "Animations disabled" : "Animations enabled"); break;
+    case Cmd_ToggleNoAnim: app.anim_mode = app.no_anim ? Anim_On : Anim_Off; fw_anim_resolve(); fw_toast(Toast_Info, app.no_anim ? "Animations off" : "Animations on"); break;
+    case Cmd_AnimSystem:   app.anim_mode = Anim_System; app.os_anim_checked_us = 0; fw_anim_resolve(); fw_toast(Toast_Info, app.no_anim ? "Animations follow system (currently off)" : "Animations follow system (currently on)"); break;
+    case Cmd_AnimOn:       app.anim_mode = Anim_On;  fw_anim_resolve(); fw_toast(Toast_Info, "Animations always on");  break;
+    case Cmd_AnimOff:      app.anim_mode = Anim_Off; fw_anim_resolve(); fw_toast(Toast_Info, "Animations always off"); break;
     case Cmd_ToggleSlowmo: app.slowmo ^= 1; fw_toast(Toast_Info, app.slowmo ? "Slow motion: animations run at 1/5 speed" : "Slow motion off"); break;
     case Cmd_ToggleBoxes:  app.show_boxes ^= 1; break;
     case Cmd_ToastInfo:    fw_toast(Toast_Info, "Heads up: this is an info toast"); break;

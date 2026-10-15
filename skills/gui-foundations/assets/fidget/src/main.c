@@ -34,6 +34,7 @@
 //- app layers (same include discipline: a file may only use what is above it)
 #include "fw_app.h"
 #include "fw_theme.c"
+#include "fw_settings.c"
 #include "fw_widgets.c"
 #include "fw_physics.c"
 #include "fw_commands.c"
@@ -306,7 +307,9 @@ frame(void)
   app.window_dim = dim_2f32(wm_client_rect_from_window(app.window));
 
   dr_begin_frame(app.icons);                       // must precede ui_begin_build
+  if(app.debug_cmd > 0 && app.frame_index == 3) { fw_run_cmd((CmdKind)(app.debug_cmd - 1)); }
   fw_theme_update();
+  fw_anim_resolve();
 #if OS_WINDOWS
   {
     // match the OS title bar to the palette (immersive dark mode attribute = 20)
@@ -349,6 +352,7 @@ frame(void)
   fw_shell_build();
 
   ui_end_build();
+  fw_settings_autosave();
   app.ui_boxes_total = ui_state->last_build_box_count;
   if(ui_animating_from_state(app.ui)) { app.frames_requested = 4; }
   if(!ui_key_match(ui_active_key(UI_MouseButtonKind_Left), ui_key_zero())) { app.frames_requested = Max(app.frames_requested, 2); }
@@ -362,8 +366,8 @@ frame(void)
       U64 balls = 0, toasts = 0;
       for EachIndex(i, BALL_MAX) { balls += app.balls[i].alive; }
       for EachIndex(i, TOAST_MAX) { toasts += app.toasts[i].alive; }
-      title = push_str8f(scratch.arena, "S pg=%d pal=%d vol=%.0f sw1=%d seg=%d dd0=%d rate=%d step=%I64d chk1=%d palopen=%d modal=%d menu=%d balls=%I64u spin=%.2f scy=%.0f/%.0f bnd=%.0f vh=%.0f wheel_evts=%I64u sort=%d/%d sel=%I64d toasts=%I64u",
-                         (int)app.page, app.palette_idx, app.slider[0], app.sw[1], app.seg, app.dd[0], app.rating, app.stepper, app.chk[1],
+      title = push_str8f(scratch.arena, "S anim=%d/%d pg=%d pal=%d vol=%.0f sw1=%d seg=%d dd0=%d rate=%d step=%I64d chk1=%d palopen=%d modal=%d menu=%d balls=%I64u spin=%.2f scy=%.0f/%.0f bnd=%.0f vh=%.0f wheel_evts=%I64u sort=%d/%d sel=%I64d toasts=%I64u",
+                         app.anim_mode, (int)app.no_anim, (int)app.page, app.palette_idx, app.slider[0], app.sw[1], app.seg, app.dd[0], app.rating, app.stepper, app.chk[1],
                          app.pal_open, app.modal_open, app.menu_open, balls, app.spin_omega,
                          fw_scroll_box ? fw_scroll_box->view_off.y : 0.f, fw_scroll_box ? fw_scroll_box->view_off_target.y : 0.f,
                          fw_scroll_box ? fw_scroll_box->view_bounds.y : 0.f, fw_scroll_box ? fw_scroll_box->fixed_size.y : 0.f, app.dbg_wheel_events,
@@ -442,6 +446,7 @@ entry_point(CmdLine *cmdline)
   fw_rng_state ^= now_time_us() * 0x9e3779b97f4a7c15ull;
   fw_theme_init();
   fw_set_palette(0);
+  fw_settings_load();
   fw_reset_values();
   fw_data_init();
   app.tree_open[0] = 1; app.tree_open[1] = 1; app.tree_open[10] = 1; app.tree_open[6] = 1;
@@ -464,7 +469,11 @@ entry_point(CmdLine *cmdline)
     if(cmd_line_has_flag(cmdline, s("modal"))) { app.modal_open = 1; }
     if(cmd_line_has_flag(cmdline, s("toast"))) { fw_toast(Toast_Good, "Welcome to gui_fidget"); fw_toast(Toast_Warn, "Press Ctrl+K for the command palette"); }
     if(cmd_line_has_flag(cmdline, s("balls")))  { app.page = Page_Playground; }
+    if(try_u64_from_str8_c_rules(cmd_line_string(cmdline, s("cmd")), &v)) { app.debug_cmd = (int)v + 1; }   // --cmd=N runs command N at frame 3
+    String8 anim = cmd_line_string(cmdline, s("anim"));     // --anim=system|on|off (not persisted)
+    if(anim.size > 0) { app.anim_mode = str8_match(anim, s("on"), 0) ? Anim_On : (str8_match(anim, s("off"), 0) ? Anim_Off : Anim_System); }
   }
+  app.saved_settings = fw_settings_snapshot();    // flags above must not be written back to the user's settings
 
   app.window = wm_window_open(r2f32p(0, 0, 1180, 780), WM_WindowFlag_UseDefaultPosition, s("gui_fidget"));
   app_fit_window_to_dpi(app.window, 1180, 780);
