@@ -1,4 +1,6 @@
-# gui_fidget
+<p align="center"><img src=".project/image.png" width="128" alt="gui_fidget logo"></p>
+
+<h1 align="center">gui_fidget</h1>
 
 Fast, small, native GUI apps in C, built on the layers of the RAD Debugger codebase
 (arena allocators, immediate-mode retained-state UI, D3D11 SDF renderer, one translation unit).
