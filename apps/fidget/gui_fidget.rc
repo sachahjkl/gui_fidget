@@ -1,0 +1,3 @@
+// Resource id 1 is what the window manager layer loads for the window class icon (taskbar, Alt+Tab),
+// and the lowest id is what Explorer shows for the exe.
+1 ICON "data\\icon.ico"

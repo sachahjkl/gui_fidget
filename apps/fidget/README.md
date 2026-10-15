@@ -26,4 +26,4 @@ Shortcuts: Ctrl+K palette, Ctrl+1..4 pages, Ctrl+T next theme, Ctrl+B status bar
     src/fw_commands.c   toasts, command dispatch, command palette, modal
     src/fw_pages.c      menu bar, status bar, shell, the 4 pages
 
-Test flags: `--page=N --theme=N --palette --palette_query=txt --modal --menu=N --toast --title_state`.
+Test flags: `--page=N --theme=N --palette --palette_query=txt --modal --menu=N --toast --title_state --anim=system|on|off --cmd=N`.

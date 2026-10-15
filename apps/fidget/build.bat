@@ -15,9 +15,11 @@ if "%mode%"=="debug" (
   set opt=/O2 /DBUILD_DEBUG=0
 )
 copy /y data\icons.ttf build\icons.ttf >nul
+:: exe icon (resource id 1, also used for the window/taskbar icon by the window manager layer)
+rc /nologo /fo build\gui_fidget.res gui_fidget.rc || exit /b 1
 pushd build
 :: /Zc:preprocessor is required (variadic + designated-initializer option macros)
 call cl %opt% /I"%KIT%" /nologo /FC /Z7 /Zc:preprocessor ..\src\main.c ^
-  /link /INCREMENTAL:NO /opt:ref /opt:icf /out:gui_fidget.exe || (popd & exit /b 1)
+  /link /INCREMENTAL:NO /opt:ref /opt:icf gui_fidget.res /out:gui_fidget.exe || (popd & exit /b 1)
 popd
 echo built build\gui_fidget.exe
