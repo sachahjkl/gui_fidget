@@ -1,0 +1,4 @@
+upstream: https://github.com/EpicGamesExt/raddebugger
+commit:   8036f7bed03f096e19cdf02ba0c90cda77ed4e16
+layers:   base window_manager shell font_provider render font_cache draw ui (+ win32/linux backends, third_party)
+refresh:  powershell -File skills/gui-foundations/scripts/extract_kit.ps1 -Upstream <raddebugger>\src -Dest kit
